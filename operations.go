@@ -10,3 +10,19 @@ func Dot(mat1 Matrix, mat2 Matrix) (result Matrix, err error) {
 	}
 	return
 }
+
+//DotProduct multiplys a row and a column
+func DotProduct(row Row, colum Row) (product float64, err error) {
+	if len(row) != len(colum) {
+		err = raiseError(fmt.Sprintf("Type rows not aligned: %v and %v", len(row), len(colum)))
+		return
+	}
+	products := []float64{}
+	for i, v := range row {
+		products = append(products, v*colum[i])
+	}
+	for _, v := range products {
+		product = product + v
+	}
+	return
+}
