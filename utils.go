@@ -2,7 +2,7 @@ package gomatrix
 
 import "fmt"
 
-func (matrix Matrix) IndexFor(row, col int) int {
+func (matrix Matrix) IndexBuf(row, col int) int {
 	return row*int(matrix[1]) + col + 2
 }
 
