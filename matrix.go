@@ -25,3 +25,16 @@ func FillMatrix(build Columns) (matrix Matrix, err error) {
 	}
 	return
 }
+
+//Zeros creates a matrix and fills it with zeros
+func Zeros(rows, cols int) (mat Matrix) {
+	mat = make(Matrix, rows*cols+2)
+	var zero float64 = 0
+	for i := range mat {
+		mat[i] = zero
+	}
+	mat[0] = float64(rows)
+	mat[1] = float64(cols)
+
+	return
+}

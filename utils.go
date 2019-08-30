@@ -43,3 +43,14 @@ func Dims(mat Matrix) []int {
 	dimensions[1] = int(mat[1])
 	return dimensions
 }
+
+//At returns the value from the ith column and the jth row
+func At(matrix Matrix, i, j int) (val float64) {
+	val = matrix[i*int(matrix[1])+j+2]
+	return
+}
+
+//Set changes the value at the ith row and jth column
+func Set(mat Matrix, i, j int, val float64) {
+	mat[mat.IndexBuf(i, j)] = val
+}
