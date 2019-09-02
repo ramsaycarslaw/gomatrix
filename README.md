@@ -10,4 +10,5 @@ To install gomatrix on linux/mac paste the following command into your terminal:
 Gomatrix has currently does not have dependencies.
 
 **Authors**
+
 Ramsay Carslaw, 2019
