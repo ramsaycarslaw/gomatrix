@@ -36,38 +36,40 @@ func Add(mat1 Matrix, mat2 Matrix) (result Matrix, err error) {
 }
 
 //Dot multiplys concurrently
-func Dot(mat1 Matrix, mat2 Matrix) (result Matrix, err error) {
+func (mat1 Matrix) Dot(mat2 Matrix) (result Matrix, err error) {
 	if mat1[0] != mat2[1] {
 		//check matrix alignment
 		err = raiseError(fmt.Sprintf("Matrices not aligned: cannot multiply"))
 		return
 	}
 	//fill result with zeros
-	result = Zeros(int(mat1[0]), int(mat2[1]))
+	//Dimensions are known as matrix multiplication is predictable
+	result = GenerateMatrix(int(mat1[0]), int(mat2[1]))
 
 	//create channels for concurrency
 	in := make(chan int)
 	exit := make(chan bool)
 
-	//create function literal (lambda function) which is run in parrallel
+	//create function literal (lambda function) for a concurrent model
 	dot := func() {
 		for {
 			//select lets a goroutine wait for a communication
-			//it is used to dertermine if there is an nput or exit control
+			//it is used to dertermine if there is an input or exit control
 			select {
 			//in the case of input it performs the multiplication of
 			//one row and one column
 			case i := <-in:
 				sums := make([]float64, int(mat2[1]))
+				//create blank list to store values for new matrix
 				for k := 0; k < int(mat1[1]); k++ {
 					for j := 0; j < int(mat2[1]); j++ {
 						//multiply row 1 by col 1, add to row 2 by col 2 etc
-						sums[j] += At(mat1, i, k) * At(mat2, k, j)
+						sums[j] += mat1.At(i, k) * mat2.At(k, j)
 					}
 				}
 				//once finished, update result
 				for j := 0; j < int(mat2[1]); j++ {
-					Set(result, i, j, sums[j])
+					result.Set(i, j, sums[j])
 				}
 			// if the maths is finished, return
 			case <-exit:
@@ -83,7 +85,7 @@ func Dot(mat1 Matrix, mat2 Matrix) (result Matrix, err error) {
 		go dot()
 	}
 	for i := 0; i < int(mat1[0]); i++ {
-		//for every row
+		//pass dot() the rows
 		in <- i
 	}
 
