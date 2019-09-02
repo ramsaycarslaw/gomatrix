@@ -12,7 +12,8 @@ Gomatrix has currently does not have dependencies.
 **Examples**
 
 To create two random matrices, multiply then print:
-`x := RandFill(10,10, 1, 100)
+
+```x := RandFill(10,10, 1, 100)
 y := RandFill(10,10, 1, 100)
 
 z, err := x.Dot(y)
@@ -21,7 +22,8 @@ if err != nil {
 	log.Fatal(err)
 }
 
-PrintMat(z)`
+PrintMat(z)
+```
 
 This will print to the terminal.
   
