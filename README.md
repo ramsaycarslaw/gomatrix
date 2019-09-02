@@ -13,7 +13,8 @@ Gomatrix has currently does not have dependencies.
 
 To create two random matrices, multiply then print:
 
-```x := RandFill(10,10, 1, 100)
+```
+x := RandFill(10,10, 1, 100)
 y := RandFill(10,10, 1, 100)
 
 z, err := x.Dot(y)
