@@ -3,6 +3,11 @@ Gomatrix is a library for the Go programming language. It features the key featu
 
 **Installation**
 
-To install gomatrix on linux/mac paste the following command into your terminal.
+To install gomatrix on linux/mac paste the following command into your terminal:
 
 `go get github.com/ramsaycarslaw/gomatrix`
+
+Gomatrix has currently does not have dependencies.
+
+**Authors**
+Ramsay Carslaw, 2019
