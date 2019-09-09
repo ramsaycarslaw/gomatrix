@@ -61,5 +61,6 @@ func (matrix Matrix) At(i, j int) (val float64) {
 
 //Set changes the value at the ith row and jth column
 func (matrix Matrix) Set(i, j int, val float64) {
-	matrix[matrix.IndexBuf(i, j)] = val
+	matrix[i*int(matrix[1])+j+2] = val
+	return
 }

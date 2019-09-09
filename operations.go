@@ -35,6 +35,22 @@ func Add(mat1 Matrix, mat2 Matrix) (result Matrix, err error) {
 	return
 }
 
+//Add adds two matrices of the same dimensions
+func (mat1 Matrix) Sub(mat2 Matrix) (Matrix, err error) {
+	if mat1[0] != mat2[0] && mat1[1] != mat2[1] {
+		err = raiseError(fmt.Sprintf("Matrices not aligned: cannot perform addition"))
+		return
+	}
+	result := GenerateMatrix(int(mat1[0]), int(mat2[1]))
+	matrix1 := mat1[2:]
+	matrix2 := mat2[2:]
+	for i := range matrix1 {
+		result[i+2] = matrix1[i] + matrix2[i]
+	}
+	return
+}
+
+//Dot multiplys concurrently
 //Dot multiplys concurrently
 func (mat1 Matrix) Dot(mat2 Matrix) (result Matrix, err error) {
 	if mat1[0] != mat2[1] {
@@ -104,9 +120,76 @@ func (matrix Matrix) Reshape(i, j int) (err error) {
 	if int(matrix[0])*int(matrix[1]) != i*j {
 		err = raiseError(fmt.Sprintf("Matrices not aligned"))
 		return
-	} else {
-		matrix[0] = float64(i)
-		matrix[1] = float64(j)
+	}
+	matrix[0] = float64(i)
+	matrix[1] = float64(j)
+	return
+}
+
+func (matrix1 Matrix) DotNaive(matrix2 Matrix) (result Matrix, err error) {
+	if matrix1[0] != matrix2[1] {
+		raiseError(fmt.Sprintf("Matrices not aligned: cannot multiply"))
 		return
 	}
+	ar := int(matrix1[0])
+	ac := int(matrix1[1])
+	bc := int(matrix2[1])
+	result = GenerateMatrix(ar, bc)
+	for i := 0; i < ar; i++ {
+		for j := 0; j < bc; j++ {
+			var sum float64
+			for k := 0; k < ac; k++ {
+				sum = sum + matrix1.At(i, k)*matrix2.At(k, j)
+			}
+			result.Set(i, j, sum)
+		}
+	}
+	return
+}
+
+func (matrix1 Matrix) Dot2(matrix2 Matrix) (result Matrix, err error) {
+	ar := int(matrix1[0])
+	ac := int(matrix1[1])
+	bc := int(matrix2[1])
+	in := make(chan int)
+	exit := make(chan bool)
+	dot := func() {
+		for {
+			select {
+			case r := <-in:
+				row := make([]float64, ac)
+				for i := range row {
+					row[i] = matrix1.At(r, i)
+				}
+				for c := 0; c < bc; c++ {
+					var v float64
+					for i, e := range row {
+						v += e * matrix2.At(i, c)
+					}
+					result[r*int(result[1])+c+2] = v
+				}
+			case <-exit:
+				return
+
+			}
+		}
+
+	}
+
+	threads := runtime.GOMAXPROCS(0) + 2
+
+	for r := 0; r < threads; r++ {
+		//perform on every avliable thread
+		go dot()
+	}
+	for r := 0; r < ar; r++ {
+		//pass dot() the rows
+		in <- r
+	}
+
+	for r := 0; r < threads; r++ {
+		//exit the goroutine every time
+		exit <- true
+	}
+	return
 }
