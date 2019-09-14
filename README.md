@@ -14,8 +14,8 @@ Gomatrix has currently does not have dependencies.
 To create two random matrices, multiply then print:
 
 ```
-x := RandFill(10,10, 1, 100)
-y := RandFill(10,10, 1, 100)
+x := gomatrix.RandFill(10,10, 1, 100)
+y := gomatrix.RandFill(10,10, 1, 100)
 
 z, err := x.Dot(y)
 
@@ -23,10 +23,19 @@ if err != nil {
 	log.Fatal(err)
 }
 
-PrintMat(z)
+gomatrix.PrintMat(z)
 ```
 
 This will print to the terminal.
+
+To fill a matrix with custom data from a slice of float64s (and print):
+```
+data := []float64{1, 2, 3, 4, 5, 6, 7, 8, 9}
+
+x := gomatrix.FilledMatrix(3, 3, data)
+
+gomatrix.PrintMat(x)
+```
   
 
 **Authors**
