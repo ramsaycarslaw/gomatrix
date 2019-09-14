@@ -31,11 +31,11 @@ func PrintMat(mat Matrix) {
 }
 
 //NestedForm returns type matrix as a nested Row type
-func NestedForm(mat Matrix) []Row {
+func NestedForm(mat Matrix) [][]float64 {
 	//rows := int(mat[0])
 	colums := int(mat[1])
-	matrix := []Row{}
-	var row Row
+	matrix := [][]float64{}
+	var row []float64
 	for _, v := range mat[2:] {
 		row = append(row, v)
 		if len(row) == colums {

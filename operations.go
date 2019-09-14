@@ -5,22 +5,6 @@ import (
 	"runtime"
 )
 
-//DotProduct multiplys a row and a column
-func DotProduct(row Row, colum Row) (product float64, err error) {
-	if len(row) != len(colum) {
-		err = raiseError(fmt.Sprintf("Type rows not aligned: %v and %v", len(row), len(colum)))
-		return
-	}
-	products := []float64{}
-	for i, v := range row {
-		products = append(products, v*colum[i])
-	}
-	for _, v := range products {
-		product = product + v
-	}
-	return
-}
-
 //Add adds two matrices of the same dimensions
 func Add(mat1 Matrix, mat2 Matrix) (result Matrix, err error) {
 	if mat1[0] != mat2[0] && mat1[1] != mat2[1] {
@@ -143,53 +127,6 @@ func (matrix1 Matrix) DotNaive(matrix2 Matrix) (result Matrix, err error) {
 			}
 			result.Set(i, j, sum)
 		}
-	}
-	return
-}
-
-func (matrix1 Matrix) Dot2(matrix2 Matrix) (result Matrix, err error) {
-	ar := int(matrix1[0])
-	ac := int(matrix1[1])
-	bc := int(matrix2[1])
-	in := make(chan int)
-	exit := make(chan bool)
-	dot := func() {
-		for {
-			select {
-			case r := <-in:
-				row := make([]float64, ac)
-				for i := range row {
-					row[i] = matrix1.At(r, i)
-				}
-				for c := 0; c < bc; c++ {
-					var v float64
-					for i, e := range row {
-						v += e * matrix2.At(i, c)
-					}
-					result[r*int(result[1])+c+2] = v
-				}
-			case <-exit:
-				return
-
-			}
-		}
-
-	}
-
-	threads := runtime.GOMAXPROCS(0) + 2
-
-	for r := 0; r < threads; r++ {
-		//perform on every avliable thread
-		go dot()
-	}
-	for r := 0; r < ar; r++ {
-		//pass dot() the rows
-		in <- r
-	}
-
-	for r := 0; r < threads; r++ {
-		//exit the goroutine every time
-		exit <- true
 	}
 	return
 }
