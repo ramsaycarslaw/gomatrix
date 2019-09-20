@@ -7,6 +7,8 @@ To install gomatrix on linux/mac paste the following command into your terminal:
 
 `go get github.com/ramsaycarslaw/gomatrix`
 
+**Dependencies**
+
 Gomatrix has currently does not have dependencies.
 
 **Examples**
