@@ -38,6 +38,25 @@ x := gomatrix.FilledMatrix(3, 3, data)
 
 gomatrix.PrintMat(x)
 ```
+
+Gomatrix can also be used to transform a point by a matrix:
+
+```
+//create vector
+data := []float64{2, 1}
+point := gomatrix.FilledVector(2, data)
+
+//create matrix
+matrixData := []float64{0, 0, 1, 0}
+matrix := gomatrix.FilledMatrix(2, 2, matrixData)
+
+//compute transformation
+transform := matrix.MatDotVec(vector)
+
+//show new point
+fmt.Println(transform)
+```
+
   
 
 **Authors**
