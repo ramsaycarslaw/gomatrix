@@ -155,34 +155,67 @@ func (matrix1 Matrix) Add(matrix2 Matrix) (result Matrix) {
 //T gets the transposed form of the matrix in the reciever
 func (matrix *Matrix) T() {
 	h := int(matrix.Rows)
+	//get the index of the data
 	for start := range matrix.Data {
 		next := start
 		i := 0
+		//while next <= start, compute new position
 		for {
 			i++
+			//find next value to update
 			next = (next%h)*int(matrix.Cols) + next/h
+			//base case
 			if next <= start {
 				break
 			}
 		}
+		//make sure it doesnt exit early
 		if next < start || i == 1 {
 			continue
 		}
+		//reset next
 		next = start
+		//create a tempory variable
 		tmp := matrix.Data[next]
 		for {
+			//find new i value
 			i = (next%h)*int(matrix.Cols) + next/h
 			if i == start {
+				//set next to temp
 				matrix.Data[next] = tmp
 			} else {
+				//set next to i
 				matrix.Data[next] = matrix.Data[i]
 			}
 			next = i
+			//base case
 			if next <= start {
 				break
 			}
 		}
 	}
+	//reset
 	matrix.Rows = matrix.Cols
 	matrix.Cols = uint(h)
+}
+
+//Cofactors applys a plus minus grid to a matrix
+func (matrix1 *Matrix) Cofactors() {
+	//set a flag variable
+	plus := true
+	//for index, value in elements of reciever matrix
+	for i, v := range matrix1.Data {
+		if plus == true {
+			//just set false as adding + to number has no effect
+			plus = false
+			//continue stops overwiting
+			continue
+		} else if plus == false {
+			//v - 2*v converts the string
+			matrix1.Data[i] = v - 2*v
+			plus = true
+			//continue stops overwriting
+			continue
+		}
+	}
 }
