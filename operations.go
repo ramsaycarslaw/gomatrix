@@ -2,6 +2,7 @@ package gomatrix
 
 import (
 	"fmt"
+	"math"
 	"runtime"
 )
 
@@ -212,10 +213,65 @@ func (matrix1 *Matrix) Cofactors() {
 			continue
 		} else if plus == false {
 			//v - 2*v converts the string
-			matrix1.Data[i] = v - 2*v
+			matrix1.Data[i] = v * -1
 			plus = true
 			//continue stops overwriting
 			continue
 		}
 	}
+}
+
+//Determinant calculates the dterminant of any given square matrix
+func (matrix1 Matrix) Determinant() (D float64) {
+	if matrix1.Rows != matrix1.Cols {
+		raiseError(fmt.Sprintf("Cannot find the determinant of non-square matrix"))
+	} else {
+		if matrix1.Rows == 2 {
+			D = ((matrix1.At(1, 1) * matrix1.At(2, 2)) - (matrix1.At(1, 2) * matrix1.At(2, 1)))
+		} else {
+			var o float64
+			var Dtemp Matrix
+			for i := 0; i < int(matrix1.Rows); i++ {
+				Dtemp = matrix1.RemoveCurrent(1, i)
+				o = matrix1.At(1, i) * (math.Pow(-1, (float64(i) + 1))) * Dtemp.Determinant()
+				if i == 1 {
+					D = o
+				} else {
+					D = D + o
+				}
+			}
+		}
+	}
+	return
+}
+
+//Inverse computes the inverse of a matrix
+func (A Matrix) Inverse() (*Matrix, error) {
+	if A.Rows != A.Cols {
+		raiseError(fmt.Sprintf("Dimensions not aligned: mathematical error"))
+	}
+	aug, _ := A.Augment(Identity(int(A.Rows)))
+	for i := 0; i < int(aug.Rows); i++ {
+		j := i
+		for k := i; k < int(aug.Rows); k++ {
+			if math.Abs(aug.At(k, i)) > math.Abs(aug.At(j, i)) {
+				j = k
+			}
+		}
+		if j != i {
+			aug.SwapRows(i, j)
+		}
+		if aug.At(i, i) == 0 {
+			return nil, nil
+		}
+		aug.ScaleRow(i, 1.0/aug.At(i, i))
+		for k := 0; k < int(aug.Rows); k++ {
+			if k == i {
+				continue
+			}
+			aug.ScaleAddRow(k, i, -aug.At(k, i))
+		}
+	}
+	inv := aug.GetMatrix(0, int(A.Cols), A.Rows, A.Cols)
+	return inv, nil
 }

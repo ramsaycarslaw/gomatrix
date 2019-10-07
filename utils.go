@@ -69,11 +69,32 @@ func (matrix Matrix) Set(i, j int, val float64) {
 }
 
 //PrintMat prints a matrix with an optional heading
-func (m *Matrix) PrintMat(heading string) {
+func (matrix *Matrix) PrintMat(heading string) {
 	if heading > "" {
 		fmt.Print("\n", heading, "\n")
 	}
-	for e := 0; e < len(m.Data); e += int(m.Cols) {
-		fmt.Println(m.Data[e : e+int(m.Cols)])
+	for e := 0; e < len(matrix.Data); e += int(matrix.Cols) {
+		fmt.Println(matrix.Data[e : e+int(matrix.Cols)])
 	}
+}
+
+//RemoveCurrent removes a row and column from a matrix and returns a new one of correct dimensions.
+func (matrix Matrix) RemoveCurrent(i, j int) (result Matrix) {
+	result = GenerateMatrix(matrix.Rows-1, matrix.Cols-1)
+	h := int(matrix.Rows)
+	stride := int(matrix.Cols)
+	//rr := int(result.Rows)
+	arr := matrix.Data
+	var m int
+	j = j - 1
+	i = i - 1
+	mod := 0
+	for k := 0; k < stride; k++ {
+		m = (k*stride + j) - mod
+		arr = arr[:m+copy(arr[m:], arr[m+1:])]
+		mod++
+	}
+	arr = append(arr[:i], arr[i+(h-1):]...)
+	result.Data = arr
+	return
 }
